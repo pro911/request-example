@@ -5,13 +5,16 @@ import (
 	"github.com/pro911/request-example/pkg/e"
 )
 
-func Success(data interface{}) map[string]interface{} {
+func Success(data interface{}, msg string) map[string]interface{} {
 	if data == nil {
 		data = make(map[string]interface{})
 	}
+	if msg == "" {
+		msg = e.GetMsg(e.SUCCESS)
+	}
 	return gin.H{
 		"code": e.SUCCESS,
-		"msg":  e.GetMsg(e.SUCCESS),
+		"msg":  msg,
 		"data": data,
 	}
 }

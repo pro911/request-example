@@ -9,6 +9,7 @@ import (
 	"github.com/pro911/request-example/pkg/e"
 	"github.com/pro911/request-example/pkg/util"
 	"github.com/unknwon/com"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,7 +41,7 @@ func Login(c *gin.Context) {
 
 	data["token"] = fmt.Sprintf("%x", md5.Sum(bytes))
 
-	c.JSON(http.StatusOK, util.Success(data))
+	c.JSON(http.StatusOK, util.Success(data, ""))
 }
 
 type AddNewJson struct {
@@ -60,7 +61,6 @@ func AddNew(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, util.ErrorFail(e.ERROR_ADD_FAIL, err.Error(), nil))
 		return
 	}
-	fmt.Println(json)
 
 	valid := validation.Validation{}
 	valid.Required(json.Title, "title").Message("标题不能为空")
@@ -81,7 +81,7 @@ func AddNew(c *gin.Context) {
 		c.JSON(http.StatusOK, util.ErrorFail(e.ERROR_ADD_FAIL, "", nil))
 		return
 	}
-	c.JSON(http.StatusOK, util.Success(make(map[string]interface{})))
+	c.JSON(http.StatusOK, util.Success(make(map[string]interface{}), "新增成功"))
 	return
 }
 
@@ -108,29 +108,98 @@ func NewsList(c *gin.Context) {
 
 	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
-
 	data["lists"] = models.GetNews(util.GetPage(c), pageSize, maps)
 	data["total"] = models.GetNewTotal(maps)
+	data["page_size"] = pageSize
+	data["cur_page"] = page
+	data["last_page"] = int(math.Ceil(float64(models.GetNewTotal(maps)) / float64(pageSize)))
 
-	c.JSON(http.StatusOK, util.Success(data))
+	c.JSON(http.StatusOK, util.Success(data, ""))
 }
 
 // NewsDetails 新闻详情
 func NewsDetails(c *gin.Context) {
+	id := com.StrTo(c.DefaultQuery("id", "0")).MustInt()
+	if id <= 0 {
+		c.JSON(http.StatusOK, util.ErrorFail(e.INVALID_PARAMS, "", nil))
+		return
+	}
+	new := models.GetNew(id)
+	if new.ID <= 0 {
+		c.JSON(http.StatusOK, util.ErrorFail(e.ERROR_NOT_EXIST_ARTICLE, "", nil))
+		return
+	}
+	c.JSON(http.StatusOK, util.Success(new, ""))
+	return
+}
 
+type NewsCommentJson struct {
+	ID      int    `json:"id" binding:"required"`
+	Content string `json:"content" binding:"required"`
 }
 
 // NewsComment 新闻评论
 func NewsComment(c *gin.Context) {
+	// 声明接收的变量
+	var json NewsCommentJson
+	// 将request的body中的数据，自动按照json格式解析到结构体
+	if err := c.ShouldBindJSON(&json); err != nil {
+		// 返回错误信息
+		// gin.H封装了生成json数据的工具
+		c.JSON(http.StatusBadRequest, util.ErrorFail(e.ERROR_ADD_FAIL, err.Error(), nil))
+		return
+	}
 
+	valid := validation.Validation{}
+	valid.Min(json.ID, 0, "id").Message("id不能小于0")
+	for _, err := range valid.Errors {
+		c.JSON(http.StatusOK, util.ErrorFail(e.INVALID_PARAMS, err.Message, nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, util.Success(make(map[string]interface{}), "新闻评论成功"))
+}
+
+type CollectNewsJson struct {
+	ID int `json:"id" binding:"required"`
 }
 
 // CollectNews 收藏新闻
 func CollectNews(c *gin.Context) {
+	var json CollectNewsJson
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, util.ErrorFail(e.ERROR_ADD_FAIL, err.Error(), nil))
+		return
+	}
 
+	valid := validation.Validation{}
+	valid.Min(json.ID, 0, "id").Message("id不能小于0")
+	for _, err := range valid.Errors {
+		c.JSON(http.StatusOK, util.ErrorFail(e.INVALID_PARAMS, err.Message, nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, util.Success(make(map[string]interface{}), "新闻收藏成功"))
+}
+
+type DeleteCommentJson struct {
+	ID        int `json:"id" binding:"required"`
+	CommentId int `json:"comment_id" binding:"required"`
 }
 
 // DeleteComment 删除评论
 func DeleteComment(c *gin.Context) {
+	var json DeleteCommentJson
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, util.ErrorFail(e.ERROR_ADD_FAIL, err.Error(), nil))
+		return
+	}
+	valid := validation.Validation{}
+	valid.Min(json.ID, 0, "id").Message("id不能小于0")
+	for _, err := range valid.Errors {
+		c.JSON(http.StatusOK, util.ErrorFail(e.INVALID_PARAMS, err.Message, nil))
+		return
+	}
 
+	c.JSON(http.StatusOK, util.Success(make(map[string]interface{}), "评论删除成功"))
 }

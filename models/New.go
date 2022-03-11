@@ -36,3 +36,8 @@ func AddNew(title string, author string, url string, content string) bool {
 	})
 	return true
 }
+
+func GetNew(id int) (new New) {
+	db.Where("id = ?", id).First(&new)
+	return
+}

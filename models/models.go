@@ -44,7 +44,7 @@ func init() {
 			NoLowerCase:   false,
 		},
 		Logger:      logger.Default.LogMode(logger.Info),
-		PrepareStmt: true, //执行任何 SQL 时都创建 prepared statement 并缓存，可以提高后续的调用速度
+		PrepareStmt: false, //执行任何 SQL 时都创建 prepared statement 并缓存，可以提高后续的调用速度
 	})
 	if err != nil {
 		log.Println(err)
