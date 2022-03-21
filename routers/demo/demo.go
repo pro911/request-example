@@ -15,16 +15,34 @@ import (
 	"time"
 )
 
+type LoginJson struct {
+	Mobile  string `json:"mobile" valid:"Required;MaxSize(11)"`
+	VerCode string `json:"ver_code" valid:"Required;MaxSize(4)"`
+}
+
 // Login 登录
 func Login(c *gin.Context) {
-	mobile := c.DefaultPostForm("mobile", "")
-	verCode := com.StrTo(c.DefaultPostForm("ver_code", "0")).MustInt()
+
+	//声明接收的变量
+	var json LoginJson
+
+	// 将request的body中的数据，自动按照json格式解析到结构体
+	if err := c.ShouldBindJSON(&json); err != nil {
+		// 返回错误信息
+		// gin.H封装了生成json数据的工具
+		c.JSON(http.StatusBadRequest, util.ErrorFail(e.ERROR_ADD_FAIL, err.Error(), nil))
+		return
+	}
+
+	//mobile := c.DefaultPostForm("mobile", "")
+	//verCode := com.StrTo(c.DefaultPostForm("ver_code", "0")).MustInt()
 
 	valid := validation.Validation{}
+	//ok, _ := valid.Valid(&json)
 
-	valid.Required(mobile, "mobile").Message("手机号不能为空")
-	valid.Mobile(mobile, "mobile").Message("手机号格式不正确")
-	valid.Required(verCode, "ver_code").Message("验证码不能为空")
+	//valid.Required(mobile, "mobile").Message("手机号不能为空")
+	//valid.Mobile(mobile, "mobile").Message("手机号格式不正确")
+	//valid.Required(verCode, "ver_code").Message("验证码不能为空")
 
 	if valid.HasErrors() {
 		for _, err := range valid.Errors {
