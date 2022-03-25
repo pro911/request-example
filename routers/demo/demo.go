@@ -1,8 +1,6 @@
 package demo
 
 import (
-	"crypto/md5"
-	"fmt"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/pro911/request-example/models"
@@ -11,8 +9,6 @@ import (
 	"github.com/unknwon/com"
 	"math"
 	"net/http"
-	"strconv"
-	"time"
 )
 
 type LoginJson struct {
@@ -38,11 +34,11 @@ func Login(c *gin.Context) {
 	//verCode := com.StrTo(c.DefaultPostForm("ver_code", "0")).MustInt()
 
 	valid := validation.Validation{}
-	//ok, _ := valid.Valid(&json)
+	valid.Valid(&json)
 
-	//valid.Required(mobile, "mobile").Message("手机号不能为空")
-	//valid.Mobile(mobile, "mobile").Message("手机号格式不正确")
-	//valid.Required(verCode, "ver_code").Message("验证码不能为空")
+	valid.Required(json.Mobile, "mobile").Message("手机号不能为空")
+	valid.Mobile(json.Mobile, "mobile").Message("手机号格式不正确")
+	valid.Required(json.Mobile, "ver_code").Message("验证码不能为空")
 
 	if valid.HasErrors() {
 		for _, err := range valid.Errors {
@@ -53,13 +49,20 @@ func Login(c *gin.Context) {
 
 	data := make(map[string]interface{})
 
-	unixNano := time.Now().UnixNano()
+	//unixNano := time.Now().UnixNano()
+	//
+	//bytes := []byte(strconv.Itoa(int(unixNano)))
+	//
+	//data["token"] = fmt.Sprintf("%x", md5.Sum(bytes))
 
-	bytes := []byte(strconv.Itoa(int(unixNano)))
-
-	data["token"] = fmt.Sprintf("%x", md5.Sum(bytes))
-
+	token, err := util.GenerateToken(json.Mobile, json.VerCode)
+	if err != nil {
+		c.JSON(http.StatusOK, util.ErrorFail(e.ERROR_AUTH_TOKEN, "", nil))
+		return
+	}
+	data["token"] = token
 	c.JSON(http.StatusOK, util.Success(data, ""))
+	return
 }
 
 type AddNewJson struct {

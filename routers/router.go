@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/pro911/request-example/middleware/jwt"
 	"github.com/pro911/request-example/pkg/setting"
 	"github.com/pro911/request-example/routers/demo"
 	"net/http"
@@ -24,10 +25,11 @@ func InitRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api")
 	{
+		//登录
+		apiv1.POST("/demo/login", demo.Login)
 		apidemo := apiv1.Group("/demo")
+		apidemo.Use(jwt.JWT())
 		{
-			//登录
-			apidemo.POST("/login", demo.Login)
 			//添加新闻
 			apidemo.POST("/news", demo.AddNew)
 			//新闻列表
