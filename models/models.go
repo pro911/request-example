@@ -1,13 +1,14 @@
 package models
 
 import (
+	"log"
+	"time"
+
 	"github.com/pro911/request-example/pkg/setting"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"log"
-	"time"
 )
 
 var db *gorm.DB
