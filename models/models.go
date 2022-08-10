@@ -1,14 +1,13 @@
 package models
 
 import (
-	"log"
-	"time"
-
-	"github.com/pro911/request-example/pkg/setting"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"log"
+	"request-example/config"
+	"time"
 )
 
 var db *gorm.DB
@@ -19,28 +18,16 @@ type Model struct {
 	UpdatedAt int `json:"updated_at"`
 }
 
-func init() {
+func InitDb() {
 	var (
-		err                              error
-		dbName, tablePrefix              string
-		setMaxIdleConns, setMaxOpenConns int
+		err error
 	)
 
-	sec, err := setting.Cfg.GetSection("database")
-	if err != nil {
-		log.Fatal(2, "Fail to get section 'database':%v", err)
-	}
-
-	dbName = sec.Key("NAME").String()
-	tablePrefix = sec.Key("TABLE_PREFIX").String()
-	setMaxIdleConns = sec.Key("SET_MAX_IDLE_CONNS").MustInt()
-	setMaxOpenConns = sec.Key("SET_MAX_OPEN_CONNS").MustInt()
-
-	db, err = gorm.Open(sqlite.Open(dbName), &gorm.Config{
+	db, err = gorm.Open(sqlite.Open(config.DbConf.Name), &gorm.Config{
 		SkipDefaultTransaction: true, //为了确保数据一致性，GORM 会在事务里执行写入操作（创建、更新、删除）。如果没有这方面的要求，您可以在初始化时禁用它，这将获得大约 30%+ 性能提升。
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   tablePrefix, //表名前缀，`User` 的表名应该是`d_users`
-			SingularTable: true,        //使用单数表名，启用该选项，此时，`User` 的表名应该是`d_user`
+			TablePrefix:   config.DbConf.TablePrefix, //表名前缀，`User` 的表名应该是`d_users`
+			SingularTable: true,                      //使用单数表名，启用该选项，此时，`User` 的表名应该是`d_user`
 			NameReplacer:  nil,
 			NoLowerCase:   false,
 		},
@@ -55,9 +42,9 @@ func init() {
 	if err2 != nil {
 		log.Println(err2)
 	}
-	sqlDB.SetMaxIdleConns(setMaxIdleConns) //最大空闲连接数
-	sqlDB.SetMaxOpenConns(setMaxOpenConns) //最大连接数
-	sqlDB.SetConnMaxLifetime(time.Hour)    //设置了连接可复用的最大时间
+	sqlDB.SetMaxIdleConns(config.DbConf.SetMaxIdleConns) //最大空闲连接数
+	sqlDB.SetMaxOpenConns(config.DbConf.SetMaxOpenConns) //最大连接数
+	sqlDB.SetConnMaxLifetime(time.Hour)                  //设置了连接可复用的最大时间
 
 	db.AutoMigrate(&New{})
 }

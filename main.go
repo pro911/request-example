@@ -2,21 +2,33 @@ package main
 
 import (
 	"fmt"
-	"github.com/pro911/request-example/pkg/setting"
-	"github.com/pro911/request-example/routers"
 	"net/http"
+	"request-example/config"
+	"request-example/models"
+	"request-example/routers"
 )
+
+func init() {
+	config.InitDbConf()
+	config.InitAppConf()
+	config.InitHttpServer()
+	config.InitJwt()
+	models.InitDb()
+}
 
 func main() {
 	r := routers.InitRouter()
-	
+
 	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", setting.HTTPPort),
+		Addr:           fmt.Sprintf("%s:%d", config.HttpServer.Host, config.HttpServer.Port),
 		Handler:        r,
-		ReadTimeout:    setting.ReadTimeout,
-		WriteTimeout:   setting.WriteTimeout,
+		ReadTimeout:    config.HttpServer.ReadTimeout,
+		WriteTimeout:   config.HttpServer.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	s.ListenAndServe()
+	if err := s.ListenAndServe(); err != nil {
+		panic(err)
+	}
+
 }

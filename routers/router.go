@@ -2,10 +2,10 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pro911/request-example/middleware/jwt"
-	"github.com/pro911/request-example/pkg/setting"
-	"github.com/pro911/request-example/routers/demo"
 	"net/http"
+	"request-example/config"
+	"request-example/middleware/jwt"
+	"request-example/routers/demo"
 )
 
 func InitRouter() *gin.Engine {
@@ -15,7 +15,7 @@ func InitRouter() *gin.Engine {
 
 	r.Use(gin.Recovery())
 
-	gin.SetMode(setting.RunMode)
+	gin.SetMode(config.AppConf.RunMode)
 
 	r.GET("/test", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

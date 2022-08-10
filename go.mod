@@ -1,16 +1,16 @@
-module github.com/pro911/request-example
+module request-example
 
 go 1.18
 
 replace (
-	github.com/pro911/request-example/conf => ./conf
-	github.com/pro911/request-example/middleware => ./middleware
-	github.com/pro911/request-example/models => ./models
-	github.com/pro911/request-example/pkg/e => ./pkg/e
-	github.com/pro911/request-example/pkg/setting => ./pkg/setting
-	github.com/pro911/request-example/pkg/util => ./pkg/util
-	github.com/pro911/request-example/routers => ./routes
-	github.com/pro911/request-example/runtime => ./runtime
+	request-example/conf => ./conf
+	request-example/middleware => ./middleware
+	request-example/models => ./models
+	request-example/pkg/e => ./pkg/e
+	request-example/pkg/setting => ./pkg/setting
+	request-example/pkg/util => ./pkg/util
+	request-example/routers => ./routes
+	request-example/runtime => ./runtime
 )
 
 require (

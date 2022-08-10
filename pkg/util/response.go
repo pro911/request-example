@@ -2,7 +2,7 @@ package util
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pro911/request-example/pkg/e"
+	"request-example/pkg/e"
 )
 
 func Success(data interface{}, msg string) map[string]interface{} {

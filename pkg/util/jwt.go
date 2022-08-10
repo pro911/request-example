@@ -2,11 +2,15 @@ package util
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"github.com/pro911/request-example/pkg/setting"
+	"request-example/config"
 	"time"
 )
 
-var jwtSecret = []byte(setting.JwtSecret)
+//var jwtSecret = []byte("23347$040412")
+//var jwtSecret = "23347$040412"
+//var jwtSecret = []byte(config.JwtSecret)
+
+var jwtSecret = []byte(config.AppConf.JwtSecret)
 
 type Claims struct {
 	Mobile  string `json:"mobile"`

@@ -3,12 +3,12 @@ package demo
 import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/pro911/request-example/models"
-	"github.com/pro911/request-example/pkg/e"
-	"github.com/pro911/request-example/pkg/util"
 	"github.com/unknwon/com"
 	"math"
 	"net/http"
+	"request-example/models"
+	"request-example/pkg/e"
+	"request-example/pkg/util"
 )
 
 type LoginJson struct {
