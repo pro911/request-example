@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
 	"math"
+	"math/rand"
 	"net/http"
 	"request-example/models"
 	"request-example/pkg/e"
@@ -223,4 +224,8 @@ func DeleteComment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, util.Success(make(map[string]interface{}), "评论删除成功"))
+}
+
+func Random(c *gin.Context) {
+	c.JSON(http.StatusOK, util.Success(rand.Intn(2), ""))
 }
