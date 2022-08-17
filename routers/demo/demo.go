@@ -229,11 +229,7 @@ func DeleteComment(c *gin.Context) {
 func Random(c *gin.Context) {
 	pType := com.StrTo(c.DefaultQuery("type", "1")).MustInt()
 	if pType == 2 {
-		if rand.Intn(2) == 0 {
-			c.JSON(http.StatusOK, util.Success(1, ""))
-		} else {
-			c.JSON(http.StatusOK, util.Success(2, ""))
-		}
+		c.JSON(http.StatusOK, util.Success(rand.Intn(2)+1, ""))
 	} else {
 		c.JSON(http.StatusOK, util.Success(rand.Intn(2), ""))
 	}
