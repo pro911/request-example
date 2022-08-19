@@ -235,3 +235,27 @@ func Random(c *gin.Context) {
 	}
 
 }
+
+func GetXml(c *gin.Context) {
+	xml := `<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration>
+    <Name>CDU</Name>
+    <Type>University</Type>
+    <Number>20000</Number>
+    <Department>12</Department>
+    <DBA>
+        <UserName>rorely</UserName>
+        <Password>136</Password>
+    </DBA>
+    <DBA>
+        <UserName>Jane</UserName>
+        <Password>123</Password>
+    </DBA>
+    <DBA>
+        <UserName>Tom</UserName>
+        <Password>456</Password>
+    </DBA>
+</Configuration>`
+	c.String(http.StatusOK, xml)
+}

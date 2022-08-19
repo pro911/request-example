@@ -17,7 +17,7 @@ type dbConf struct {
 
 type httpServer struct {
 	Host         string        `json:"host" default:"0.0.0.0"`
-	Port         int           `json:"port" default:"8088"`
+	Port         int           `json:"port" default:"30008"`
 	ReadTimeout  time.Duration `json:"read_timeout"`
 	WriteTimeout time.Duration `json:"write_timeout"`
 }

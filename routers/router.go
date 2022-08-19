@@ -29,6 +29,7 @@ func InitRouter() *gin.Engine {
 		apiv1.POST("/demo/login", demo.Login)
 		apidemo := apiv1.Group("/demo")
 		apidemo.Any("/random", demo.Random)
+		apidemo.Any("/xml", demo.GetXml)
 		apidemo.Use(jwt.JWT())
 		{
 			//添加新闻
